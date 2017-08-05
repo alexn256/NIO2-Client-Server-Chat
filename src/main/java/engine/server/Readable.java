@@ -105,8 +105,8 @@ public class Readable implements Runnable {
                 }
             }
         }
-        catch (Exception e){
-            e.printStackTrace();
+        catch (IOException e){
+            System.out.println("can not write message to clients");
         }
     }
 }
