@@ -1,21 +1,20 @@
 package engine.client;
 
-
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 
 public class Client{
 
-    private int port;
-    private String host;
+    private User user = new User("Test User");
+    private ByteBuffer buffer = ByteBuffer.allocate(64);
     private SocketChannel channel;
-    private Socket socket;
     private InetSocketAddress address;
+    private ExecutorService service;
 
     public Client(String host, int port){
         try {
@@ -23,37 +22,35 @@ public class Client{
             channel = SocketChannel.open();
             channel.connect(address);
             channel.configureBlocking(false);
-            while (true){
-                write(consoleRead());
-            }
+            writeUsername(user.getName());
+            service = Executors.newFixedThreadPool(2);
+            service.execute(new ReadFromServer(channel));
+            service.execute(new WriteToServer(channel, user));
         } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("can't connected to " + address);
+            System.out.println("can't connected to " + address.getHostName());
             System.exit(0);
         }
-
     }
 
-    public String consoleRead(){
-        Scanner scanner = new Scanner(System.in);
-        return scanner.next();
-    }
-
-    public void write(String message){
-        ByteBuffer buffer = ByteBuffer.allocate(message.getBytes().length);
+    private void writeUsername(String username){
         buffer.clear();
-        buffer.put(message.getBytes());
+        buffer.put(username.getBytes());
         buffer.flip();
         while (buffer.hasRemaining()){
             try {
                 channel.write(buffer);
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("registration username on server is impassible!");
             }
         }
     }
 
-    public static void main(String[] args) {
+    private void close(){
+        service.shutdown();
+        System.exit(0);
+    }
+
+    public static void main(String[] args){
         Client client = new Client("localhost",9999);
     }
 }
