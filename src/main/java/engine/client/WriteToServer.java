@@ -1,44 +1,47 @@
 package engine.client;
 
 import engine.message.Message;
-import java.io.BufferedReader;
+
+import javax.swing.*;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
 public class WriteToServer implements Runnable {
 
     private SocketChannel channel;
-    private BufferedReader keyboardReader;
     private User user;
     private ByteBuffer buffer = ByteBuffer.allocate(256);
+    private JTextArea area;
+    private String message;
 
-    public WriteToServer(SocketChannel channel, User user) {
-        keyboardReader = new BufferedReader(new InputStreamReader(System.in));
+    public WriteToServer(SocketChannel channel, User user, JTextArea area) {
         this.channel = channel;
         this.user = user;
+        this.area = area;
     }
 
     @Override
     public void run() {
         try {
             while (channel.isOpen()){
-                String message = readFromKeyboard();
-                buffer.clear();
-                buffer.put(message.getBytes());
-                buffer.flip();
-                while (buffer.hasRemaining()){
-                    channel.write(buffer);
-                }
+               if (message != null && !message.equals("")){
+                   buffer.clear();
+                   buffer.put(message.getBytes());
+                   buffer.flip();
+                   while (buffer.hasRemaining()){
+                       channel.write(buffer);
+                   }
+                   message = "";
+               }
             }
         } catch (IOException e) {
             System.out.println("can not send data to the server!");
         }
     }
 
-    private String readFromKeyboard() throws IOException {
-        Message message = new Message(keyboardReader.readLine(), user);
-        return message.getMessage();
+    public void readFromKeyboard() {
+        Message string = new Message(area.getText(), user);
+        message = string.getMessage();
     }
 }

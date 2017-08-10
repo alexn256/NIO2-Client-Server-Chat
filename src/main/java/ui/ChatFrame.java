@@ -1,5 +1,7 @@
 package ui;
 
+import engine.client.Client;
+
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -16,6 +18,8 @@ public class ChatFrame extends JFrame{
     private JButton clear;
     private Dimension dimension;
 
+    private Client client;
+
     public ChatFrame(){
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -30,6 +34,11 @@ public class ChatFrame extends JFrame{
         rootPanel.add(textScrolling);
         rootPanel.add(messageScrolling);
         add(rootPanel);
+
+        client = new Client("localhost", 9999, textArea, messageArea);
+
+        send.addActionListener(e -> {client.getWriter().readFromKeyboard();
+        messageArea.setText("");});
 
         ImageIcon logo = new ImageIcon("logo.png");
         setIconImage(logo.getImage());
