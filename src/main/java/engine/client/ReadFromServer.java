@@ -1,5 +1,6 @@
 package engine.client;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
@@ -9,9 +10,11 @@ public class ReadFromServer implements Runnable {
 
     private SocketChannel channel;
     private ByteBuffer buffer = ByteBuffer.allocate(256);
+    private JTextArea area;
 
-    public ReadFromServer(SocketChannel channel) {
+    public ReadFromServer(SocketChannel channel, JTextArea area) {
         this.channel = channel;
+        this.area = area;
     }
 
     @Override
@@ -37,6 +40,15 @@ public class ReadFromServer implements Runnable {
                 else {
                     if (!message.equals("")){
                         System.out.println(message);
+                        if (area.getText().length() < 1){
+                            area.setText(message);
+                            builder.setLength(0);
+                        }
+                        else {
+                            builder.append(area.getText() + "\n" + message);
+                            area.setText(builder.toString());
+                            builder.setLength(0);
+                        }
                     }
                 }
             }

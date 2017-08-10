@@ -19,8 +19,10 @@ public class ChatFrame extends JFrame{
     private Dimension dimension;
 
     private Client client;
+    private String host;
+    private String username;
 
-    public ChatFrame(){
+    public ChatFrame(String username, String host){
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
@@ -35,7 +37,7 @@ public class ChatFrame extends JFrame{
         rootPanel.add(messageScrolling);
         add(rootPanel);
 
-        client = new Client("localhost", 9999, textArea, messageArea);
+        client = new Client(host, 9999, textArea, messageArea, username);
 
         send.addActionListener(e -> {client.getWriter().readFromKeyboard();
         messageArea.setText("");});
@@ -81,9 +83,5 @@ public class ChatFrame extends JFrame{
         messageScrolling = new JScrollPane(messageArea);
         messageScrolling.setBounds(0, 200, 300, 100);
         messageScrolling.setBorder(panelBorder);
-    }
-
-    public static void main(String[] args) {
-        new ChatFrame();
     }
 }

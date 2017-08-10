@@ -59,6 +59,9 @@ public class LoginFrame extends JFrame{
 
         button = new JButton("Login");
         button.setBounds(50, 175, 80, 30 );
+
+        button.addActionListener(e -> {new ChatFrame(usernameField.getText(), hostField.getText());
+        setVisible(false);});
     }
 
     public static void main(String[] args) {
