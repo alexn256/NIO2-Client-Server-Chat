@@ -28,15 +28,15 @@ public class LoginFrame extends JFrame{
         rootPanel.add(button);
         add(rootPanel);
 
+        ImageIcon logo = new ImageIcon("src/resources/logo.png");
+        setIconImage(logo.getImage());
+
         setTitle("NIO2 Chat v1.0.1");
         setSize(190,275);
         setLocationRelativeTo(null);
         setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
-
-        ImageIcon logo = new ImageIcon("logo.png");
-        setIconImage(logo.getImage());
     }
 
     private void initComponents(){
@@ -61,10 +61,10 @@ public class LoginFrame extends JFrame{
         button.setBounds(50, 175, 80, 30 );
 
         button.addActionListener(e -> {new ChatFrame(usernameField.getText(), hostField.getText());
-        setVisible(false);});
+            setVisible(false);});
     }
 
     public static void main(String[] args) {
-        LoginFrame frame = new LoginFrame();
+        new LoginFrame();
     }
 }

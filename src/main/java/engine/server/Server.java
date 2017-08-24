@@ -10,8 +10,6 @@ import java.util.concurrent.*;
 public class Server {
 
     private ServerSocketChannel serverChanel;
-    private ServerSocket serverSocket;
-    private int port;
     private Selector selector;
     private InetSocketAddress socketAddress;
     private ExecutorService service;

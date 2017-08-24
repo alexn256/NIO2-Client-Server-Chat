@@ -6,6 +6,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 
@@ -14,6 +15,7 @@ public class Readable implements Runnable {
     private ServerSocketChannel channel;
     private Selector selector;
     private ByteBuffer buffer;
+    private ArrayList<String> users = new ArrayList<>();
 
     public Readable(ServerSocketChannel channel) {
         this.channel = channel;
@@ -63,14 +65,21 @@ public class Readable implements Runnable {
             }
             String message = builder.toString();
             if (read < 0){
-                message = key.attachment() + " has left us.";
+                message = key.attachment() + ", has left us.";
+                users.remove(key.attachment());
                 System.out.println(message);
-                broadcast(message);
+                System.out.println("users: " + users.toString());
                 socketChannel.close();
+                broadcast(message);
             }
             else {
                 if (key.attachment() == null && !message.equals("")){
                     key.attach(message);
+                    users.add(message);
+                    System.out.println("users: " + users.toString());
+                    sendUsers(key);
+                    Thread.sleep(1000);
+                    broadcast(message + ", connected to us...");
                 }
                 else {
                     System.out.println(message);
@@ -79,6 +88,8 @@ public class Readable implements Runnable {
             }
         } catch (IOException e) {
             System.out.println("connection with client was terminated...");
+        } catch (InterruptedException e) {
+            System.out.println("thread can not be suspended!");
         }
     }
 
@@ -107,6 +118,20 @@ public class Readable implements Runnable {
         }
         catch (IOException e){
             System.out.println("can not write message to clients");
+        }
+    }
+
+    private void sendUsers(SelectionKey key){
+        try {
+            StringBuilder builder = new StringBuilder();
+            for (String user : users) {
+                builder.append(user+ "_");
+            }
+            SocketChannel channel = (SocketChannel) key.channel();
+            ByteBuffer buffer = ByteBuffer.wrap(builder.toString().getBytes());
+            channel.write(buffer);
+        } catch (IOException e) {
+            System.out.println("clients can not be sent through the channel");
         }
     }
 }

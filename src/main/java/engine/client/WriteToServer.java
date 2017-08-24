@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.nio.charset.Charset;
 
 public class WriteToServer implements Runnable {
 
@@ -25,15 +26,15 @@ public class WriteToServer implements Runnable {
     public void run() {
         try {
             while (channel.isOpen()){
-               if (message != null && !message.equals("")){
-                   buffer.clear();
-                   buffer.put(message.getBytes());
-                   buffer.flip();
-                   while (buffer.hasRemaining()){
-                       channel.write(buffer);
-                   }
-                   message = "";
-               }
+                if (message != null && !message.equals("")){
+                    buffer.clear();
+                    buffer.put(message.getBytes( Charset.forName("UTF-8" )));
+                    buffer.flip();
+                    while (buffer.hasRemaining()){
+                        channel.write(buffer);
+                    }
+                    message = "";
+                }
             }
         } catch (IOException e) {
             System.out.println("can not send data to the server!");
