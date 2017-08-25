@@ -1,10 +1,11 @@
 package engine.server;
 
+import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.ServerSocket;
 import java.nio.channels.*;
 import java.util.concurrent.*;
+
 
 
 public class Server {
@@ -13,6 +14,7 @@ public class Server {
     private Selector selector;
     private InetSocketAddress socketAddress;
     private ExecutorService service;
+    final static Logger logger = Logger.getLogger(Server.class);
 
     public Server(int port) {
         socketAddress = new InetSocketAddress("localhost", port);
@@ -24,8 +26,7 @@ public class Server {
             service = Executors.newFixedThreadPool(2);
             service.execute(new Readable(serverChanel));
         } catch (IOException e) {
-            System.err.println("impossible open server socket channel!");
-            e.printStackTrace();
+            logger.error("impossible open server socket channel!", e);
         }
     }
 

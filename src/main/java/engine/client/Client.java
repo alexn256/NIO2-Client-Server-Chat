@@ -1,6 +1,9 @@
 package engine.client;
 
 
+import engine.server.Server;
+import org.apache.log4j.Logger;
+
 import javax.swing.*;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -26,6 +29,7 @@ public class Client{
     private String host;
     private int port;
     private ArrayList<String> users = new ArrayList<>();
+    final static Logger logger = Logger.getLogger(Client.class);
 
     public Client(String host, int port, JTextArea logArea, JTextArea messageArea, String username, JList list){
         this.host = host;
@@ -53,7 +57,7 @@ public class Client{
             service.execute(writer);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "The Server is not accessible or it may be down because of Network Issue", "ERROR", JOptionPane.ERROR_MESSAGE);
-            System.out.println("can't connected to " + address.getHostName());
+            logger.error("can't connected to " + address.getHostName(), e);
             System.exit(0);
         }
     }
@@ -70,7 +74,7 @@ public class Client{
             try {
                 channel.write(buffer);
             } catch (IOException e) {
-                System.out.println("registration username on server is impassible!");
+                logger.error("registration username on server is impassible!", e);
             }
         }
     }
@@ -94,7 +98,6 @@ public class Client{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("client users: " + builder.toString());
         return list;
     }
 }

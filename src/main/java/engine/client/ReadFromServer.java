@@ -1,5 +1,8 @@
 package engine.client;
 
+import engine.server.Server;
+import org.apache.log4j.Logger;
+
 import javax.swing.*;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -16,6 +19,7 @@ public class ReadFromServer implements Runnable {
     private JList list;
     private DefaultListModel model;
     private ArrayList<String> users;
+    final static Logger logger = Logger.getLogger(ReadFromServer.class);
 
 
     public ReadFromServer(SocketChannel channel, JTextArea area, JList list, ArrayList<String> users) {
@@ -42,7 +46,7 @@ public class ReadFromServer implements Runnable {
                 String message = builder.toString();
                 builder.setLength(0);
                 if (read < 0) {
-                    System.out.println("connection with server was terminated!");
+                    logger.info("connection with server was terminated!");
                     channel.close();
                     System.exit(0);
                 } else {
@@ -61,7 +65,7 @@ public class ReadFromServer implements Runnable {
                                 }
                             }
                         }
-                        System.out.println(message);
+                        logger.info(message);
                         if (area.getText().length() < 1) {
                             area.setText(message);
                             builder.setLength(0);
@@ -74,7 +78,7 @@ public class ReadFromServer implements Runnable {
                 }
             }
         } catch (IOException e) {
-            System.out.println("reading data from server is impossible!");
+            logger.error("reading data from server is impossible!", e);
         }
     }
 
@@ -94,4 +98,5 @@ public class ReadFromServer implements Runnable {
         }
         list.setModel(model);
     }
+
 }

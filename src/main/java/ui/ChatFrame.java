@@ -83,7 +83,6 @@ public class ChatFrame extends JFrame{
 
         textArea = new JTextArea();
         textArea.setLineWrap(true);
-        textArea.setWrapStyleWord(true);
         textArea.setEditable(false);
         textArea.setFont(new Font("Calibri", Font.PLAIN, 12));
 

@@ -47,7 +47,7 @@ public class LoginFrame extends JFrame{
         hostField.setBounds(20, 50, 145, 25);
         hostField.setColumns(10);
 
-        usernameField = new JTextField();
+        usernameField = new JTextField(15);
         usernameField.setBounds(20, 125, 145, 25);
         usernameField.setColumns(10);
 

@@ -1,6 +1,8 @@
 package engine.client;
 
 import engine.message.Message;
+import engine.server.Server;
+import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -15,6 +17,7 @@ public class WriteToServer implements Runnable {
     private ByteBuffer buffer = ByteBuffer.allocate(256);
     private JTextArea area;
     private String message;
+    final static Logger logger = Logger.getLogger(WriteToServer.class);
 
     public WriteToServer(SocketChannel channel, User user, JTextArea area) {
         this.channel = channel;
@@ -37,7 +40,7 @@ public class WriteToServer implements Runnable {
                 }
             }
         } catch (IOException e) {
-            System.out.println("can not send data to the server!");
+            logger.error("can not send data to the server!", e);
         }
     }
 

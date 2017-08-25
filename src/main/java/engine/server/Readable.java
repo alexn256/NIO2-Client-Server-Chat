@@ -1,5 +1,7 @@
 package engine.server;
 
+import org.apache.log4j.Logger;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
@@ -16,6 +18,7 @@ public class Readable implements Runnable {
     private Selector selector;
     private ByteBuffer buffer;
     private ArrayList<String> users = new ArrayList<>();
+    final static Logger logger = Logger.getLogger(Readable.class);
 
     public Readable(ServerSocketChannel channel) {
         this.channel = channel;
@@ -27,7 +30,7 @@ public class Readable implements Runnable {
             selector = Selector.open();
             channel.register(selector, SelectionKey.OP_ACCEPT);
         } catch (IOException e) {
-            System.out.println("selector can not be opened!");
+            logger.error("selector can not be opened!", e);
         }
 
         while (true) {
@@ -45,7 +48,7 @@ public class Readable implements Runnable {
                     }
                 }
             } catch (IOException e) {
-                System.out.println("to get a selection keys is impossible!");
+                logger.error("to get a selection keys is impossible!", e);
             }
         }
     }
@@ -67,8 +70,7 @@ public class Readable implements Runnable {
             if (read < 0){
                 message = key.attachment() + ", has left us.";
                 users.remove(key.attachment());
-                System.out.println(message);
-                System.out.println("users: " + users.toString());
+                logger.info(message);
                 socketChannel.close();
                 broadcast(message);
             }
@@ -76,20 +78,19 @@ public class Readable implements Runnable {
                 if (key.attachment() == null && !message.equals("")){
                     key.attach(message);
                     users.add(message);
-                    System.out.println("users: " + users.toString());
                     sendUsers(key);
                     Thread.sleep(1000);
                     broadcast(message + ", connected to us...");
                 }
                 else {
-                    System.out.println(message);
+                    logger.info(message);
                     broadcast(message);
                 }
             }
         } catch (IOException e) {
-            System.out.println("connection with client was terminated...");
+            logger.error("connection with client was terminated...", e);
         } catch (InterruptedException e) {
-            System.out.println("thread can not be suspended!");
+            logger.error("connection with client was terminated...", e);
         }
     }
 
@@ -99,9 +100,9 @@ public class Readable implements Runnable {
             String address = socketChannel.socket().getInetAddress().toString();
             socketChannel.configureBlocking(false);
             socketChannel.register(selector, key.OP_READ);
-            System.out.println("successfully connection from:" + address);
+            logger.info("successfully connection from:" + address);
         } catch (IOException e) {
-            System.out.println("connection to the client can not be established!!!");
+            logger.error("connection to the client can not be established!!!", e);
         }
     }
 
@@ -117,7 +118,7 @@ public class Readable implements Runnable {
             }
         }
         catch (IOException e){
-            System.out.println("can not write message to clients");
+            logger.error("can not write message to clients", e);
         }
     }
 
@@ -131,7 +132,7 @@ public class Readable implements Runnable {
             ByteBuffer buffer = ByteBuffer.wrap(builder.toString().getBytes());
             channel.write(buffer);
         } catch (IOException e) {
-            System.out.println("clients can not be sent through the channel");
+            logger.error("clients can not be sent through the channel", e);
         }
     }
 }
