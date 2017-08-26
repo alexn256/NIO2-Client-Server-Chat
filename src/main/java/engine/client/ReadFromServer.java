@@ -83,6 +83,10 @@ public class ReadFromServer implements Runnable {
     }
 
     private boolean ListChanged(String message) {
+        String[] test = message.split(":");
+        if(test.length > 2){
+            return false;
+        }
         String[] words = message.split(",");
         if(words.length > 1){
             return  (words[1].equals(" connected to us...") || words[1].equals(" has left us."));

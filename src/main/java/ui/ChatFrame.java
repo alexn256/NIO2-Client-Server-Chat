@@ -54,7 +54,7 @@ public class ChatFrame extends JFrame{
 
         clear.addActionListener(e -> textArea.setText(""));
 
-        dimension = new Dimension(600, 330);
+        dimension = new Dimension(600, 300);
         setIconImage(new ImageIcon("src/resources/logo.png").getImage());
         setTitle("NIO2 Chat v1.0.1");
         setMinimumSize(dimension);
