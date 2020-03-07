@@ -1,9 +1,11 @@
 package ui;
 
 import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 
-public class LoginFrame extends JFrame{
+public class LoginFrame extends JDialog {
 
     private JPanel rootPanel;
     private JLabel host;
@@ -35,7 +37,6 @@ public class LoginFrame extends JFrame{
         setSize(190,275);
         setLocationRelativeTo(null);
         setResizable(false);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
     }
 
@@ -62,6 +63,13 @@ public class LoginFrame extends JFrame{
 
         button.addActionListener(e -> {new ChatFrame(usernameField.getText(), hostField.getText());
             setVisible(false);});
+
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                System.exit(0);
+            }
+        });
     }
 
     public static void main(String[] args) {
